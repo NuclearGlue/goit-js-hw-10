@@ -21,13 +21,25 @@ function onInput(event) {
 
 
     API.findCountry(fieldContent)
-    //.then(renderCountries)
-    //.catch(error => {console.log(error)}).finaly(() => field.reset())
+    .then(renderCountries)
+    //.catch(error => {console.log(error)})
 } 
 
 
 
-// function renderCountries(country) {
-//     const markup = countryCardTpl(country);
-//     refs.cardContainer.innerHTML = markup;
-// }
+function renderCountries(country) {
+    const countryObject = country.map(type => type);
+   
+    const cardMarkup = `<div>
+    <div class='flag'>
+    <img src = '${countryObject.flags}''>
+    </div>
+    <h2 class ='country-name'>'${countryObject.name}'</h2>
+    </div>
+    <p class='country-meta'>Capital:<span>${countryObject.capital}</span></p>
+    <p class='country-meta'>Population:<span>${countryObject.population}</span></p>
+     <p class='country-meta'>Languages:<span>${countryObject.languages}</span></p>
+    `;
+    
+        countryInfo.innerHTML = cardMarkup;
+}
