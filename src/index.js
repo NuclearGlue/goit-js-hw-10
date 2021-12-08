@@ -24,15 +24,17 @@ function onInput(event) {
     if (fieldContent.trim() !== '') {
         API.findCountry(fieldContent)
         .then(renderCountries)
-    .catch(error => Notiflix.Notify.failure('Oops, there is no country with that name'))} 
+    .catch(errorMsg)} 
 }
 
-
+function errorMsg() {
+    Notify.failure('Oops, there is no country with that name');
+}
 
 function renderCountries(country) {
     const cardMarkup = countryCard(country);
     const itemMarkup = countryItem(country);
-    console.log(country.length);
+    
     if (country.length === 1) {
         countryInfo.innerHTML = cardMarkup;
         countryList.innerHTML = '';
