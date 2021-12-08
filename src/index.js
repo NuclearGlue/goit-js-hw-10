@@ -3,43 +3,51 @@ import './css/styles.css';
 import '/fetchCountries';
 import debounce from 'lodash.debounce';
 import API from '/fetchCountries';
-
+import countryCard from './templates/country-card.hbs';
+import countryItem from './templates/country-item.hbs';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const countryList = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
 
-
-const DEBOUNCE_DELAY = 300;
 const textField = document.querySelector('#search-box');
+const DEBOUNCE_DELAY = 300;
 
- 
-textField.addEventListener('input',debounce(onInput,DEBOUNCE_DELAY));
+
+
+textField.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
 
 function onInput(event) {
     const field = event.target;
     const fieldContent = field.value;
 
-
-    API.findCountry(fieldContent)
-    .then(renderCountries)
-    //.catch(error => {console.log(error)})
-} 
+    if (fieldContent.trim() !== '') {
+        API.findCountry(fieldContent)
+        .then(renderCountries)
+    .catch(error => Notiflix.Notify.failure('Oops, there is no country with that name'))} 
+}
 
 
 
 function renderCountries(country) {
-    const countryObject = country.map(type => type);
-   
-    const cardMarkup = `<div>
-    <div class='flag'>
-    <img src = '${countryObject.flags}''>
-    </div>
-    <h2 class ='country-name'>'${countryObject.name}'</h2>
-    </div>
-    <p class='country-meta'>Capital:<span>${countryObject.capital}</span></p>
-    <p class='country-meta'>Population:<span>${countryObject.population}</span></p>
-     <p class='country-meta'>Languages:<span>${countryObject.languages}</span></p>
-    `;
-    
+    const cardMarkup = countryCard(country);
+    const itemMarkup = countryItem(country);
+    console.log(country.length);
+    if (country.length === 1) {
         countryInfo.innerHTML = cardMarkup;
+        countryList.innerHTML = '';
+    }
+    else if (country.length <= 10 && country.length >= 2) {
+        countryList.innerHTML = itemMarkup;
+        countryInfo.innerHTML = '';
+   }
+    else if (country.length > 10) {
+        countryInfo.innerHTML = '';
+        countryList.innerHTML = '';
+        Notify.info('Too many matches found. Please enter a more specific name.');  
+    }
+    else {
+        countryInfo.innerHTML = '';
+        countryList.innerHTML = '';
+    }
 }
